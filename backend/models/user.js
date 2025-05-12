@@ -25,14 +25,12 @@ const userSchema = new Schema({
   profile: {
     name: String,
     bio: String,
-    fitnessGoals: [String],
-    preferredWorkoutTypes: [String]
   }
 }, {
   timestamps: true
 });
 
-// Hash password before saving
+// hash password before saving
 userSchema.pre('save', async function(next) {
   if (this.isModified('password')) {
     this.password = await bcrypt.hash(this.password, 10);
@@ -40,7 +38,7 @@ userSchema.pre('save', async function(next) {
   next();
 });
 
-// Method to check password validity
+// method to compare password
 userSchema.methods.comparePassword = async function(candidatePassword) {
   return await bcrypt.compare(candidatePassword, this.password);
 };

@@ -2,7 +2,7 @@ const router = require('express').Router();
 const Workout = require('../models/workout');
 const auth = require('../middleware/auth');
 
-// Get all workouts for a user
+// get all workouts for a user
 router.get('/', auth, async (req, res) => {
   try {
     const workouts = await Workout.find({ userId: req.user._id });
@@ -12,7 +12,7 @@ router.get('/', auth, async (req, res) => {
   }
 });
 
-// Add a new workout
+// add a new workout
 router.post('/', auth, async (req, res) => {
   try {
     const newWorkout = new Workout({
@@ -30,7 +30,7 @@ router.post('/', auth, async (req, res) => {
   }
 });
 
-// Get a specific workout
+// get a specific workout
 router.get('/:id', auth, async (req, res) => {
   try {
     const workout = await Workout.findOne({
@@ -38,7 +38,7 @@ router.get('/:id', auth, async (req, res) => {
       userId: req.user._id
     });
     if (!workout) {
-      return res.status(404).json('Workout not found');
+      return res.status(404).json('workout not found');
     }
     res.json(workout);
   } catch (err) {
@@ -46,7 +46,7 @@ router.get('/:id', auth, async (req, res) => {
   }
 });
 
-// Update a workout
+// update a workout
 router.put('/:id', auth, async (req, res) => {
   try {
     const workout = await Workout.findOneAndUpdate(
@@ -60,7 +60,7 @@ router.put('/:id', auth, async (req, res) => {
       { new: true }
     );
     if (!workout) {
-      return res.status(404).json('Workout not found');
+      return res.status(404).json('workout not found');
     }
     res.json(workout);
   } catch (err) {
@@ -68,7 +68,7 @@ router.put('/:id', auth, async (req, res) => {
   }
 });
 
-// Delete a workout
+// delete a workout
 router.delete('/:id', auth, async (req, res) => {
   try {
     const workout = await Workout.findOneAndDelete({
@@ -76,9 +76,9 @@ router.delete('/:id', auth, async (req, res) => {
       userId: req.user._id
     });
     if (!workout) {
-      return res.status(404).json('Workout not found');
+      return res.status(404).json('workout not found');
     }
-    res.json('Workout deleted');
+    res.json('workout deleted');
   } catch (err) {
     res.status(400).json('Error: ' + err);
   }

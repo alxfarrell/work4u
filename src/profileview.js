@@ -6,7 +6,7 @@ const ProfileView = () => {
 
   useEffect(() => {
     if (localStorage.getItem("token")) {
-      navigate("/profile"); // Redirect if already logged in
+      navigate("/profile"); // redirect if already logged in
     }
   }, []);
 

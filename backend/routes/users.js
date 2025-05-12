@@ -3,28 +3,29 @@ const User = require('../models/User');
 const jwt = require('jsonwebtoken');
 const auth = require('../middleware/auth');
 
-// Register a new user
+// register new user
 router.post('/register', async (req, res) => {
   try {
     const { username, email, password } = req.body;
     
-    // Check if user already exists
+    // check if user already exists
     const existingUser = await User.findOne({ $or: [{ email }, { username }] });
     if (existingUser) {
-      return res.status(400).json('Username or email already exists');
+      return res.status(400).json({ error: 'username or email already exists' });
     }
 
+    // create new user
     const user = new User({ username, email, password });
     await user.save();
 
-    // Create token
+    // generate JWT token
     const token = jwt.sign(
       { id: user._id },
-      process.env.JWT_SECRET || 'your-default-secret',
+      process.env.JWT_SECRET || 'work4u-secret-key-463f761f',
       { expiresIn: '24h' }
     );
 
-    res.json({
+    res.status(201).json({
       token,
       user: {
         id: user._id,
@@ -33,31 +34,31 @@ router.post('/register', async (req, res) => {
       }
     });
   } catch (err) {
-    res.status(400).json('Error: ' + err);
+    res.status(400).json({ error: err.message });
   }
 });
 
-// Login user
+// login user
 router.post('/login', async (req, res) => {
   try {
     const { username, password } = req.body;
     
-    // Find user
+    // find user
     const user = await User.findOne({ username });
     if (!user) {
-      return res.status(400).json('User not found');
+      return res.status(400).json({ error: 'invalid creds' });
     }
 
-    // Validate password
+    // check password
     const isMatch = await user.comparePassword(password);
     if (!isMatch) {
-      return res.status(400).json('Invalid credentials');
+      return res.status(400).json({ error: 'invalid creds' });
     }
 
-    // Create token
+    // generate JWT token
     const token = jwt.sign(
       { id: user._id },
-      process.env.JWT_SECRET || 'your-default-secret',
+      process.env.JWT_SECRET || 'work4u-secret-key-463f761f',
       { expiresIn: '24h' }
     );
 
@@ -70,31 +71,36 @@ router.post('/login', async (req, res) => {
       }
     });
   } catch (err) {
-    res.status(400).json('Error: ' + err);
+    res.status(400).json({ error: err.message });
   }
 });
 
-// Get user profile
+// logout user
+router.post('/logout', auth, (req, res) => {
+  res.json({ message: 'Logged out successfully' });
+});
+
+// get user profile (protected route)
 router.get('/profile', auth, async (req, res) => {
   try {
-    const user = await User.findById(req.user.id).select('-password');
+    const user = await User.findById(req.user._id).select('-password');
     res.json(user);
   } catch (err) {
-    res.status(400).json('Error: ' + err);
+    res.status(400).json({ error: err.message });
   }
 });
 
-// Update user profile
+// update user profile (protected route)
 router.put('/profile', auth, async (req, res) => {
   try {
     const user = await User.findByIdAndUpdate(
-      req.user.id,
+      req.user._id,
       { profile: req.body.profile },
       { new: true }
     ).select('-password');
     res.json(user);
   } catch (err) {
-    res.status(400).json('Error: ' + err);
+    res.status(400).json({ error: err.message });
   }
 });
 

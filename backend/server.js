@@ -6,11 +6,11 @@ require('dotenv').config();
 const app = express();
 const port = process.env.PORT || 5000;
 
-// Middleware
+// middleware
 app.use(cors());
 app.use(express.json());
 
-// MongoDB Connection
+// mongoDB connection
 const uri = process.env.MONGODB_URI || 'mongodb://localhost:27017/work4u';
 mongoose.connect(uri, {
   useNewUrlParser: true,
@@ -22,7 +22,7 @@ connection.once('open', () => {
   console.log('MongoDB database connection established successfully');
 });
 
-// Routes
+// routes
 const workoutsRouter = require('./routes/workouts');
 const usersRouter = require('./routes/users');
 

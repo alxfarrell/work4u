@@ -1,6 +1,6 @@
-import { set } from "mongoose";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useNavigate, Link } from "react-router-dom";
+import { fetchWithAuth } from './utils/api';
 
 const Login = () => {
   const [username, setUsername] = useState("");
@@ -8,9 +8,20 @@ const Login = () => {
   const [error, setError] = useState("");
   const navigate = useNavigate();
 
+  // Restore form data from sessionStorage if exists
+  useEffect(() => {
+    const savedUsername = sessionStorage.getItem('loginUsername');
+    if (savedUsername) {
+      setUsername(savedUsername);
+    }
+  }, []);
+
   const handleLogin = async (event) => {
     event.preventDefault();
     try {
+      // Save form data to sessionStorage
+      sessionStorage.setItem('loginUsername', username);
+
       const response = await fetch('http://localhost:4000/api/users/login', {
         method: 'POST',
         headers: {
@@ -24,9 +35,12 @@ const Login = () => {
         throw new Error(data.message || 'Login failed');
       }
 
-      // Store token and user data
+      // store token and user data in localStorage
       localStorage.setItem("token", data.token);
       localStorage.setItem("user", JSON.stringify(data.user));
+
+      // Clear session storage on successful login
+      sessionStorage.removeItem('loginUsername');
       navigate("/profile");
     } catch (error) {
       console.error('Login error:', error);
@@ -35,32 +49,33 @@ const Login = () => {
   };
 
   return (
-    <div className="content-container">
-      <h2>Login</h2>
-      {error && <p style={{ color: "red" }}>{error}</p>} {/* displays error */}
+    <div className="login-container">
       <form onSubmit={handleLogin}>
+        <h2>Login</h2>
+        {error && <div className="error-message">{error}</div>}
         <div>
-          <label>Username: </label>
-          <input 
-            type="text" 
-            value={username} 
-            onChange={(e) => setUsername(e.target.value)} 
+          <label>Username:</label>
+          <input
+            type="text"
+            value={username}
+            onChange={(e) => setUsername(e.target.value)}
+            required
           />
         </div>
         <div>
-          <label>Password: </label>
-          <input 
-            type="password" 
-            value={password} 
-            onChange={(e) => setPassword(e.target.value)} 
+          <label>Password:</label>
+          <input
+            type="password"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            required
           />
         </div>
         <button type="submit">Login</button>
+        <p>
+          Don't have an account? <Link to="/register">Register here</Link>
+        </p>
       </form>
-      <div style={{ marginTop: '20px' }}>
-        <Link to="/register" className="nav-link">Register</Link> | 
-        <Link to="/profileview" className="nav-link">View Profile</Link>
-      </div>
     </div>
   );
 };
