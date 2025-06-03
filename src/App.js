@@ -1,4 +1,4 @@
-import { Routes, Route, Navigate, Link } from "react-router-dom";
+import { Routes, Route, Link } from "react-router-dom";
 import Login from "./login";
 import Profile from "./profile";
 import ProfileView from "./profileview";
@@ -6,6 +6,7 @@ import Register from "./register";
 import Home from "./home";
 import Contact from "./Contact";
 import About from "./About";
+import Exercises from "./Exercises";
 import "./App.css";
 
 function App() {
@@ -19,6 +20,7 @@ function App() {
         <Link to="/profileview" className="nav-link">Profile View</Link>
         <Link to="/contact" className="nav-link">Contact</Link>
         <Link to="/about" className="nav-link">About</Link>
+        <Link to="/exercises" className="nav-link">Exercises</Link>
       </nav>
       <Routes>
         <Route path="/" element={<Home />} />
@@ -28,6 +30,7 @@ function App() {
         <Route path="/profile" element={<Profile />} />
         <Route path="/contact" element={<Contact />} />
         <Route path="/about" element={<About />} />
+        <Route path="/exercises" element={<Exercises />} />
       </Routes>
     </div>
   );

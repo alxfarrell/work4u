@@ -6,6 +6,7 @@ const cors = require('cors');
 const userRoutes = require('./routes/users');
 const workoutRoutes = require('./routes/workouts');
 const contactRouter = require('./routes/contact');
+const exercisesRouter = require('./routes/exercises');
 
 // express app
 const app = express();
@@ -27,6 +28,8 @@ app.use((req, res, next) => {
 app.use('/api/users', userRoutes);
 app.use('/api/workouts', workoutRoutes);
 app.use('/api/contact', contactRouter);
+app.use('/api/exercises', exercisesRouter);
+
 
 // connect to MongoDB
 const mongoUri = process.env.MONGO_URI || 'mongodb://127.0.0.1:27017/work4u';
